@@ -16,8 +16,9 @@ public class UserController {
     }
 
     @PostMapping
-    public UserDTO createUser(@RequestParam String name) {
-        User user = userService.createUser(name);
+    public UserDTO loginOrRegister(@RequestBody java.util.Map<String, String> body) {
+        String name = body.get("name");
+        User user = userService.findOrCreateUser(name);
         return userService.getUserDTO(user.getId());
     }
 
