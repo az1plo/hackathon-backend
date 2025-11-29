@@ -6,12 +6,16 @@ import org.springframework.web.reactive.function.client.WebClient;
 
 @Configuration
 public class WebClientConfig {
-//    @Bean
-//    public WebClient webClient(WebClient.Builder builder) {
-//        return builder.build();
-//    }
-//    @Bean
-//    public WebClient.Builder builder() {
-//        return
-//    }
+
+    @Bean
+    public WebClient.Builder webClientBuilder() {
+        return WebClient.builder();
+    }
+
+    @Bean
+    public WebClient googleWebClient(WebClient.Builder builder) {
+        return builder
+                .baseUrl("https://maps.googleapis.com/maps/api/place")
+                .build();
+    }
 }
