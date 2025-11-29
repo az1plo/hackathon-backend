@@ -14,10 +14,13 @@ public class UserService {
         this.userRepo = userRepo;
     }
 
-    public User createUser(String name) {
-        User user = new User();
-        user.setName(name);
-        return userRepo.save(user);
+    public User findOrCreateUser(String name) {
+        return userRepo.findByName(name)
+                .orElseGet(() -> {
+                    User user = new User();
+                    user.setName(name);
+                    return userRepo.save(user);
+                });
     }
 
     public User getUser(Long id) {
