@@ -11,16 +11,18 @@ public class SearchDTO {
     private String type;
     private LocalDateTime createdAt;
     private Long userId;
+    private String aiResponse;
 
     private List<ResultMarkResponse> results;
 
-    public SearchDTO(Long id, String query, String type, LocalDateTime createdAt, Long userId, List<ResultMarkResponse> results) {
+    public SearchDTO(Long id, String query, String type, LocalDateTime createdAt, Long userId, List<ResultMarkResponse> results, String aiResponse) {
         this.id = id;
         this.query = query;
         this.type = type;
         this.createdAt = createdAt;
         this.userId = userId;
         this.results = results;
+        this.aiResponse = aiResponse;
     }
 
     public Search toEntity() {
@@ -50,4 +52,7 @@ public class SearchDTO {
 
     public List<ResultMarkResponse> getResults() { return results; }
     public void setResults(List<ResultMarkResponse> results) { this.results = results; }
+
+    public String getAiResponse() { return aiResponse; }
+    public void setAiResponse(String aiResponse) { this.aiResponse = aiResponse; }
 }

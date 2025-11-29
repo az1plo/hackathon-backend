@@ -18,13 +18,16 @@ public class SearchService {
     private final SearchRepository searchRepo;
     private final UserService userService;
     private final ResultMarkService resultMarkService;
+    private final OpenAiService openAiService;
 
     public SearchService(SearchRepository searchRepo,
                          @Lazy UserService userService,
-                         @Lazy ResultMarkService resultMarkService) {
+                         @Lazy ResultMarkService resultMarkService,
+                         OpenAiService openAiService) {
         this.searchRepo = searchRepo;
         this.userService = userService;
         this.resultMarkService = resultMarkService;
+        this.openAiService = openAiService;
     }
 
     @Transactional
@@ -38,9 +41,11 @@ public class SearchService {
 
         search = searchRepo.save(search);
 
+        // Call OpenAI with the query
+        String aiResponse = openAiService.chat(query);
 
         List<ResultMarkResponse> resultDTOs = resultMarkService.getResultsBySearchDTO(search);
-        return toDTO(search, resultDTOs);
+        return toDTO(search, resultDTOs, aiResponse);
     }
 
     public SearchDTO getSearchByIdDTO(Long searchId) {
@@ -48,24 +53,25 @@ public class SearchService {
                 .orElseThrow(() -> new RuntimeException("Search not found"));
 
         List<ResultMarkResponse> results = resultMarkService.getResultsBySearchDTO(search);
-        return toDTO(search, results);
+        return toDTO(search, results, null);
     }
 
     public List<SearchDTO> getRecentSearchesDTO(Long userId) {
         List<Search> searches = searchRepo.findTop5ByUserIdOrderByCreatedAtDesc(userId);
         return searches.stream()
-                .map(s -> toDTO(s, resultMarkService.getResultsBySearchDTO(s)))
+                .map(s -> toDTO(s, resultMarkService.getResultsBySearchDTO(s), null))
                 .collect(Collectors.toList());
     }
 
-    private SearchDTO toDTO(Search search, List<ResultMarkResponse> results) {
+    private SearchDTO toDTO(Search search, List<ResultMarkResponse> results, String aiResponse) {
         return new SearchDTO(
                 search.getId(),
                 search.getQuery(),
                 search.getType(),
                 search.getCreatedAt(),
                 search.getUser().getId(),
-                results
+                results,
+                aiResponse
         );
     }
 }
