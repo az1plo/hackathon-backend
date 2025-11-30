@@ -22,10 +22,15 @@ public class SearchController {
         if (request.getUserId() == null) {
             throw new IllegalArgumentException("User ID is required");
         }
+        if (request.getLatitude() == null || request.getLongitude() == null) {
+            throw new IllegalArgumentException("Latitude and longitude are required");
+        }
         return searchService.createSearch(
                 request.getUserId(),
                 request.getQuery(),
-                request.getType()
+                request.getType(),
+                request.getLatitude(),
+                request.getLongitude()
         );
     }
 

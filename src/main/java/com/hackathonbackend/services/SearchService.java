@@ -31,7 +31,7 @@ public class SearchService {
     }
 
     @Transactional
-    public SearchDTO createSearch(Long userId, String query, String type) {
+    public SearchDTO createSearch(Long userId, String query, String type, Double latitude, Double longitude) {
         User user = userService.getUser(userId);
 
         Search search = new Search();
@@ -41,8 +41,8 @@ public class SearchService {
 
         search = searchRepo.save(search);
 
-        // Call OpenAI with the query
-        String aiResponse = openAiService.chat(query);
+        // Call OpenAI with the query and location
+        String aiResponse = openAiService.searchPlaces(query, latitude, longitude);
 
         List<ResultMarkResponse> resultDTOs = resultMarkService.getResultsBySearchDTO(search);
         return toDTO(search, resultDTOs, aiResponse);
